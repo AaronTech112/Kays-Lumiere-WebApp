@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <section class="page-hero">
+      <div class="container editorial-animate">
+        <span class="pill">Account</span>
+        <h1>Your Profile</h1>
+        <p class="section-subtitle">
+          Manage your personal details and view your order history.
+        </p>
+      </div>
+    </section>
+
+    <section class="section fade-in">
+      <div class="container grid grid-2" style="align-items: start;">
+        
+        <!-- Profile Form -->
+        <div class="card">
+          <h2 class="section-title">Personal Details</h2>
+          <form method="POST" action="{% url 'profile' %}">
+            {% csrf_token %}
+            <label>Full Name</label>
+            <input class="field" type="text" value="{{ user.get_full_name }}" disabled style="background-color: #f9f9f9;" />
+            <p class="auth-muted" style="margin-top: -10px; margin-bottom: 20px;">Name cannot be changed here.</p>
+            
+            <label>Email</label>
+            <input class="field" type="email" value="{{ user.email }}" disabled style="background-color: #f9f9f9;" />
+            
+            <label for="phone">Phone</label>
+            <input class="field" id="phone" name="phone" type="tel" value="{{ profile.phone }}" />
+            
+            <label for="address">Address</label>
+            <input class="field" id="address" name="address" type="text" value="{{ profile.address }}" />
+            
+            <label for="city">City</label>
+            <input class="field" id="city" name="city" type="text" value="{{ profile.city }}" />
+            
+            <label for="state">State</label>
+            <input class="field" id="state" name="state" type="text" value="{{ profile.state }}" />
+            
+            <button class="btn btn-gold" type="submit">Save Changes</button>
+          </form>
+        </div>
+
+        <!-- Order History -->
+        <div class="card">
+          <h2 class="section-title">Order History</h2>
+          {% if orders %}
+            <div class="orders-list">
+              {% for order in orders %}
+              <div class="order-item" style="border-bottom: 1px solid #eee; padding-bottom: 20px; margin-bottom: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <h3 style="font-size: 1.1rem; margin-bottom: 5px;">Order #{{ order.id|stringformat:"04d" }}</h3>
+                  <span class="pill" style="font-size: 0.8rem; padding: 2px 8px;">{{ order.get_status_display }}</span>
+                </div>
+                <p class="auth-muted">{{ order.created_at|date:"F j, Y" }}</p>
+                <p>Total: <strong>₦{{ order.total_amount }}</strong></p>
+                <p>{{ order.items.count }} items</p>
+              </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <p>You haven't placed any orders yet.</p>
+            <a href="{% url 'shop' %}" class="btn btn-outline" style="margin-top: 20px;">Start Shopping</a>
+          {% endif %}
+        </div>
+        
+      </div>
+    </section>
+{% endblock %}

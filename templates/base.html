@@ -1,0 +1,141 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Kay’s Lumière crafts premium fine jewelry for life’s finest moments. Discover collections, heritage craftsmanship, and certified stones."
+    />
+    <title>{% block title %}Kay’s Lumière | Crafted jewelry for life’s finest moments{% endblock %}</title>
+    <link rel="icon" href="{% static 'images/logo.png' %}" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    {% block extra_css %}{% endblock %}
+  </head>
+  <body>
+    <!-- Header -->
+    <header>
+      <div class="container nav-inner" aria-label="Primary navigation">
+        <a class="logo" href="{% url 'home' %}">
+          <img src="{% static 'images/logo.png' %}" alt="Kay’s Lumière logo" />
+        </a>
+        <nav class="nav-links" aria-label="Main navigation">
+          <a href="{% url 'home' %}">Home</a> <!-- Added Home link for easier navigation -->
+          <a href="{% url 'collections' %}">Collections</a>
+          <a href="{% url 'shop' %}">Shop</a>
+          
+          {% if user.is_authenticated %}
+            <a href="{% url 'profile' %}">Profile</a>
+            <a href="{% url 'logout' %}">Logout</a>
+          {% else %}
+            <a href="{% url 'login' %}">Login</a>
+            <a href="{% url 'signup' %}">Sign Up</a>
+          {% endif %}
+        </nav>
+        <div class="nav-cta">
+          <a href="{% url 'cart' %}" aria-label="Cart">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg> 
+            <span class="cart-count" data-cart-count>{{ cart_item_count|default:"0" }}</span>
+          </a>
+          <a class="btn btn-gold" href="{% url 'shop' %}">Shop Now</a>
+          <button class="nav-toggle" type="button" data-nav-toggle aria-label="Open menu">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div class="nav-overlay" data-nav-overlay aria-hidden="true"></div>
+    <aside class="nav-drawer" data-nav-drawer aria-hidden="true">
+      <div class="nav-drawer-header">
+        <a class="logo" href="{% url 'home' %}">
+          <img src="{% static 'images/logo.png' %}" alt="Kay’s Lumière logo" />
+        </a>
+        <button class="nav-close" type="button" data-nav-close aria-label="Close menu">
+          ×
+        </button>
+      </div>
+      <nav class="nav-drawer-links" aria-label="Mobile navigation">
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'collections' %}">Collections</a>
+        <a href="{% url 'shop' %}">Shop</a>
+        {% if user.is_authenticated %}
+            <a href="{% url 'profile' %}">Profile</a>
+            <a href="{% url 'order_history' %}">My Orders</a>
+            <a href="{% url 'logout' %}">Logout</a>
+        {% else %}
+            <a href="{% url 'login' %}">Login</a>
+            <a href="{% url 'signup' %}">Sign Up</a>
+        {% endif %}
+        <a href="{% url 'cart' %}">Cart <span class="cart-count" data-cart-count>{{ cart_item_count|default:"0" }}</span></a>
+      </nav>
+      <div class="nav-drawer-cta">
+        <a class="btn btn-gold" href="{% url 'shop' %}">Shop Now</a>
+        <a class="btn btn-outline" href="{% url 'cart' %}">View Cart</a>
+      </div>
+    </aside>
+
+    {% if messages %}
+    <div class="container" style="margin-top: 20px;">
+        {% for message in messages %}
+        <div class="alert {{ message.tags }}" style="padding: 10px; background-color: #f8f9fa; border: 1px solid #ddd; margin-bottom: 10px;">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container footer-grid">
+        <div>
+          <div class="footer-logo">
+            <img src="{% static 'images/logo.png' %}" alt="Kay’s Lumière logo" />
+          </div>
+          <p>Crafted jewelry for life’s finest moments.</p>
+        </div>
+        <div>
+          <h4>Maison</h4>
+          <a href="{% url 'home' %}">Home</a><br />
+          <a href="{% url 'collections' %}">Collections</a>
+        </div>
+        <div>
+          <h4>Client Services</h4>
+          <a href="{% url 'cart' %}">Cart</a><br />
+          <a href="{% url 'checkout' %}">Checkout</a>
+        </div>
+        <div>
+          <h4>Follow</h4>
+          <a href="#">Instagram</a><br />
+          <a href="#">Pinterest</a><br />
+          <a href="#">LinkedIn</a>
+        </div>
+      </div>
+      <div class="container footer-bottom">
+        <span>© 2026 Kay’s Lumière. All rights reserved.</span>
+        <span>Luxury fine jewelry house of Nigeria.</span>
+      </div>
+    </footer>
+
+    <!-- Scripts -->
+    <div class="lightbox" data-lightbox aria-hidden="true" role="dialog" aria-label="Image preview">
+      <button class="lightbox-close" type="button" data-lightbox-close aria-label="Close image">
+        Close
+      </button>
+      <img src="" alt="" data-lightbox-image />
+    </div>
+
+    <!-- CSRF Token for JS -->
+    <script>
+        const csrftoken = '{{ csrf_token }}';
+        const userIsAuthenticated = {{ user.is_authenticated|yesno:"true,false" }};
+    </script>
+    <script src="{% static 'js/main.js' %}" defer></script>
+    {% block extra_js %}{% endblock %}
+  </body>
+</html>

@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <!-- Hero -->
+    <section class="page-hero">
+      <div class="container editorial-animate">
+        <span class="pill">Our Maison</span>
+        <h1>Where meaning meets brilliance.</h1>
+        <p class="section-subtitle">
+          An intimate journey into the soul of Kay’s Lumière and the values that shape
+          our legacy.
+        </p>
+      </div>
+    </section>
+
+    <!-- Brand Story -->
+    <section class="section fade-in">
+      <div class="container story">
+        <div>
+          <h2 class="section-title">Brand Story</h2>
+          <p>
+            Kay’s Lumière emerged from a conviction that jewelry should transcend sparkle.
+            It should hold memory, carry intention, and quietly honor the moments that
+            define a life well lived. Each piece is imagined as a luminous keepsake,
+            inspired by the way light moves across heirlooms, city skylines, and the
+            tender rituals of celebration.
+          </p>
+          <p>
+            Our atelier blends heritage craft with modern refinement, marrying pure gold
+            with ethically sourced stones and meticulous finishing. From the first sketch
+            to the final polish, every creation is designed to feel personal, enduring,
+            and unmistakably radiant.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Atelier Image Section -->
+    <section class="section fade-in">
+      <div class="container">
+        <img src="{% static 'images/product-3.jpg' %}" alt="Atelier" style="width: 100%; height: 400px; object-fit: cover; border-radius: 4px;">
+      </div>
+    </section>
+{% endblock %}

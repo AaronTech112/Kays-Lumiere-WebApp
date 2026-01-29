@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <!-- Hero -->
+    <section class="page-hero">
+      <div class="container editorial-animate">
+        <span class="pill">Checkout</span>
+        <h1>Complete your purchase with confidence.</h1>
+        <p class="section-subtitle">
+          Secure checkout experience with concierge support.
+        </p>
+      </div>
+    </section>
+
+    <!-- Checkout Form + Summary -->
+    <section class="section fade-in">
+      <div class="container grid grid-2">
+        <form class="card" aria-label="Checkout form" id="checkout-form">
+          <h2 class="section-title">Delivery Details</h2>
+          <label for="full-name">Full Name</label>
+          <input class="field" id="full-name" type="text" value="{{ user.get_full_name }}" required />
+          
+          <label for="phone">Phone</label>
+          <input class="field" id="phone" type="tel" value="{{ user.profile.phone }}" required />
+          
+          <label for="address">Address</label>
+          <input class="field" id="address" type="text" value="{{ user.profile.address }}" required />
+          
+          <label for="city">City</label>
+          <input class="field" id="city" type="text" required placeholder="e.g. Lagos" />
+          
+          <label for="state">State</label>
+          <input class="field" id="state" type="text" required />
+          
+          <label for="notes">Delivery Notes</label>
+          <textarea class="field" id="notes" rows="4"></textarea>
+          
+          <button class="btn btn-gold" type="submit" id="pay-btn">Place Order & Pay</button>
+        </form>
+        
+        <div class="summary">
+          <h2 class="section-title">Order Summary</h2>
+          <div class="order-items-preview" style="margin-bottom: 20px;">
+            {% for item in cart.items.all %}
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                <span>{{ item.product.name }} x {{ item.quantity }}</span>
+                <span>₦{{ item.get_total_price }}</span>
+            </div>
+            {% endfor %}
+          </div>
+          
+          <p>Subtotal: <strong>₦{{ cart.get_total_price }}</strong></p>
+          <p>Delivery: <span id="shipping-cost">Calculated at next step</span></p>
+          <hr />
+          <p>Total: <strong id="total-cost">₦{{ cart.get_total_price }}</strong></p>
+          
+          <div style="margin-top: 24px">
+            <p>
+              Need assistance? Reach our concierge on WhatsApp for payment and
+              scheduling support.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://checkout.flutterwave.com/v3.js"></script>
+<script>
+    const form = document.getElementById('checkout-form');
+    const payBtn = document.getElementById('pay-btn');
+    const publicKey = "{{ flutterwave_public_key }}";
+    const userEmail = "{{ user.email }}";
+    
+    // Simple shipping estimator
+    document.getElementById('city').addEventListener('change', function() {
+        const city = this.value.toLowerCase();
+        let shipping = 2500;
+        if (city.includes('lagos')) {
+            shipping = 1000;
+        }
+        document.getElementById('shipping-cost').textContent = "₦" + shipping;
+        
+        // Update total (visual only, backend calculates actual)
+        const subtotal = {{ cart.get_total_price }};
+        document.getElementById('total-cost').textContent = "₦" + (subtotal + shipping);
+    });
+
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const fullName = document.getElementById('full-name').value;
+        const phone = document.getElementById('phone').value;
+        const address = document.getElementById('address').value;
+        const city = document.getElementById('city').value;
+        const state = document.getElementById('state').value;
+        const notes = document.getElementById('notes').value;
+        
+        payBtn.disabled = true;
+        payBtn.textContent = "Processing...";
+        
+        // 1. Create Order on Backend
+        fetch("{% url 'place_order' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrftoken
+            },
+            body: JSON.stringify({
+                address: address,
+                city: city,
+                state: state,
+                phone: phone,
+                notes: notes
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert(data.error);
+                payBtn.disabled = false;
+                payBtn.textContent = "Place Order & Pay";
+                return;
+            }
+            
+            // 2. Initiate Flutterwave Payment
+            makePayment(data.order_id, data.amount, data.email, data.tx_ref, fullName, phone);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            payBtn.disabled = false;
+            payBtn.textContent = "Place Order & Pay";
+            alert("An error occurred. Please try again.");
+        });
+    });
+    
+    function makePayment(orderId, amount, email, txRef, name, phone) {
+        FlutterwaveCheckout({
+            public_key: publicKey,
+            tx_ref: txRef,
+            amount: amount,
+            currency: "NGN",
+            payment_options: "card, mobilemoneyghana, ussd",
+            customer: {
+                email: email,
+                phone_number: phone,
+                name: name,
+            },
+            callback: function (data) {
+                console.log("payment callback:", data);
+                // Verify payment on backend
+                verifyPayment(data.transaction_id, orderId);
+            },
+            onclose: function() {
+                payBtn.disabled = false;
+                payBtn.textContent = "Place Order & Pay";
+                alert("Payment cancelled.");
+            },
+            customizations: {
+                title: "Kay’s Lumière",
+                description: "Payment for jewelry order",
+                logo: "{% static 'images/logo.png' %}",
+            },
+        });
+    }
+    
+    function verifyPayment(transactionId, orderId) {
+        fetch("{% url 'verify_payment' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrftoken
+            },
+            body: JSON.stringify({
+                transaction_id: transactionId,
+                order_id: orderId
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                window.location.href = "{% url 'profile' %}?payment=success";
+            } else {
+                alert("Payment verification failed: " + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error verifying payment:', error);
+        });
+    }
+</script>
+{% endblock %}

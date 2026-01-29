@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <section class="page-hero">
+      <div class="container editorial-animate">
+        <span class="pill">Account</span>
+        <h1>Create your Kay’s Lumière profile.</h1>
+        <p class="section-subtitle">
+          Unlock private previews, order archives, and bespoke concierge support.
+        </p>
+      </div>
+    </section>
+
+    <section class="section fade-in">
+      <div class="container auth-shell">
+        <div class="auth-grid">
+          <div class="card auth-card">
+            <h2 class="section-title">Sign Up</h2>
+            <form method="POST" action="{% url 'signup' %}" aria-label="Signup form">
+              {% csrf_token %}
+              {% if form.errors %}
+                <div class="alert error">
+                  {% for field in form %}
+                    {% for error in field.errors %}
+                      <p>{{ error }}</p>
+                    {% endfor %}
+                  {% endfor %}
+                  {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                  {% endfor %}
+                </div>
+              {% endif %}
+
+              {% for field in form %}
+              <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+              {{ field }}
+              {% endfor %}
+
+              <div class="auth-actions" style="margin-top: 20px;">
+                <button class="btn btn-gold" type="submit">Create Account</button>
+                <a class="btn btn-outline" href="{% url 'login' %}">Already have an account?</a>
+              </div>
+            </form>
+          </div>
+          <div class="card auth-card">
+            <h2 class="section-title">Private Client Benefits</h2>
+            <p>
+              Receive tailored recommendations, bespoke services, and invitations to
+              private viewings.
+            </p>
+            <div class="auth-benefits">
+              <div>
+                <p class="product-title">Wishlist Vault</p>
+                <p class="auth-muted">Save your favorite pieces for later.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+{% endblock %}

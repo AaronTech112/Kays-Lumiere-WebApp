@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <!-- Hero -->
+    <section class="page-hero">
+      <div class="container editorial-animate">
+        <span class="pill" data-product-category>{{ product.category.name }}</span>
+        <h1 data-product-name>{{ product.name }}</h1>
+        <p class="section-subtitle" data-product-tagline>
+          {{ product.description|truncatewords:20 }}
+        </p>
+      </div>
+    </section>
+
+    <!-- Product Details -->
+    <section class="section fade-in">
+      <div class="container grid grid-2" style="align-items: start">
+        <div class="product-gallery">
+          <div class="product-main">
+            <img
+              src="{{ product.image.url }}"
+              alt="{{ product.name }}"
+              data-main-image
+              data-lightbox-trigger
+              style="width: 100%; object-fit: cover;"
+            />
+          </div>
+        </div>
+
+        <div class="product-details">
+          <div class="detail-block">
+            <h2 class="section-title">Description</h2>
+            <p data-product-desc>
+              {{ product.description }}
+            </p>
+          </div>
+          
+          <div class="detail-block">
+            <h2 class="section-title">Price</h2>
+            <p class="price" data-product-price>₦{{ product.price }}</p>
+          </div>
+
+          <div class="detail-block">
+            <label for="quantity" class="label">Quantity</label>
+            <div class="quantity-selector">
+              <button type="button" id="qty-minus" aria-label="Decrease quantity">-</button>
+              <input type="number" id="quantity" value="1" min="1" max="{{ product.stock_quantity }}" readonly style="width: 50px; text-align: center; border: none;">
+              <button type="button" id="qty-plus" aria-label="Increase quantity">+</button>
+            </div>
+          </div>
+
+          <div style="margin-top: 32px">
+            <button class="btn btn-gold" id="add-to-cart-btn" style="width: 100%">
+              Add to Cart
+            </button>
+            <p style="margin-top: 16px; font-size: 0.9rem; color: #666">
+              Complimentary shipping & insurance included.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Related Products -->
+    {% if related_products %}
+    <section class="section fade-in" style="background: var(--ivory)">
+      <div class="container">
+        <h2 class="section-title">You May Also Adore</h2>
+        <div class="grid grid-3" style="margin-top: 32px">
+          {% for related in related_products %}
+          <article class="card product-card">
+            <img
+              src="{{ related.image.url }}"
+              alt="{{ related.name }}"
+              loading="lazy"
+              style="width: 100%; height: 300px; object-fit: cover;"
+            />
+            <div class="product-info">
+              <h3 class="product-title">{{ related.name }}</h3>
+              <p class="price">₦{{ related.price }}</p>
+              <a class="btn btn-outline" href="{% url 'product_detail' related.slug %}">View Details</a>
+            </div>
+          </article>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+    {% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const qtyInput = document.getElementById('quantity');
+    const minusBtn = document.getElementById('qty-minus');
+    const plusBtn = document.getElementById('qty-plus');
+    const addToCartBtn = document.getElementById('add-to-cart-btn');
+    const maxStock = {{ product.stock_quantity }};
+
+    minusBtn.addEventListener('click', () => {
+        let val = parseInt(qtyInput.value);
+        if (val > 1) qtyInput.value = val - 1;
+    });
+
+    plusBtn.addEventListener('click', () => {
+        let val = parseInt(qtyInput.value);
+        if (val < maxStock) qtyInput.value = val + 1;
+    });
+
+    addToCartBtn.addEventListener('click', () => {
+        if (!userIsAuthenticated) {
+            window.location.href = "{% url 'login' %}?next=" + window.location.pathname;
+            return;
+        }
+
+        const quantity = parseInt(qtyInput.value);
+        
+        fetch("{% url 'add_to_cart' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrftoken
+            },
+            body: JSON.stringify({
+                product_id: {{ product.id }},
+                quantity: quantity
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert(data.error);
+            } else {
+                alert(data.message);
+                // Update cart count
+                document.querySelectorAll('[data-cart-count]').forEach(el => {
+                    el.textContent = data.cart_count;
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <section class="page-hero">
+      <div class="container editorial-animate">
+        <span class="pill">Account</span>
+        <h1>Welcome back to Kay’s Lumière.</h1>
+        <p class="section-subtitle">
+          Log in to manage your orders, concierge requests, and wishlist pieces.
+        </p>
+      </div>
+    </section>
+
+    <section class="section fade-in">
+      <div class="container auth-shell">
+        <div class="auth-grid">
+          <div class="card auth-card">
+            <h2 class="section-title">Log In</h2>
+            <form method="POST" action="{% url 'login' %}" aria-label="Login form">
+              {% csrf_token %}
+              {% if form.errors %}
+                <div class="alert error">
+                  {% for field in form %}
+                    {% for error in field.errors %}
+                      <p>{{ error }}</p>
+                    {% endfor %}
+                  {% endfor %}
+                  {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                  {% endfor %}
+                </div>
+              {% endif %}
+              
+              <label for="username">Username</label>
+              <input class="field" id="username" name="username" type="text" placeholder="Username" required />
+              
+              <label for="password">Password</label>
+              <input class="field" id="password" name="password" type="password" placeholder="••••••••" required />
+              
+              <input type="hidden" name="next" value="{{ next }}">
+              
+              <div class="auth-actions">
+                <button class="btn btn-gold" type="submit">Log In</button>
+                <a class="btn btn-outline" href="{% url 'profile' %}">Track Order</a>
+              </div>
+            </form>
+            <p class="auth-muted">Forgot your password? Speak with our concierge for secure access recovery.</p>
+          </div>
+          <div class="card auth-card">
+            <h2 class="section-title">New to Kay’s Lumière?</h2>
+            <p>
+              Create an account to save bespoke requests, track purchases, and receive
+              private previews.
+            </p>
+            <div class="auth-actions">
+              <a class="btn" href="{% url 'signup' %}">Create Account</a>
+              <a class="btn btn-outline" href="contact.html">Talk to Concierge</a>
+            </div>
+            <div class="auth-benefits">
+              <div>
+                <p class="product-title">Priority Support</p>
+                <p class="auth-muted">Direct access to your dedicated concierge.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+{% endblock %}

@@ -1,0 +1,213 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <!-- Hero -->
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="editorial-animate">
+          <span class="pill">Kay’s Lumière</span>
+          <h1 class="hero-title">Crafted jewelry for life’s finest moments.</h1>
+          <p class="hero-text">
+            A couture house dedicated to enduring brilliance, heirloom artistry, and
+            the luminous stories that define your most treasured celebrations.
+          </p>
+          <div class="badge-row">
+            <span class="badge">Pure gold craftsmanship</span>
+            <span class="badge">Ethically sourced diamonds</span>
+            <span class="badge">GIA & IGI certified stones</span>
+          </div>
+          <div style="margin-top: 32px; display: flex; gap: 16px; flex-wrap: wrap">
+            <a class="btn" href="{% url 'collections' %}">Explore Collections</a>
+            <a class="btn btn-outline" href="#">Our Story</a>
+          </div>
+        </div>
+        <div class="hero-image editorial-animate">
+          <img
+            src="{% static 'images/product-1.jpg' %}"
+            alt="Radiant diamond ring close-up"
+            loading="lazy"
+            data-lightbox-trigger
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- Featured Collections -->
+    <section class="section fade-in">
+      <div class="container">
+        <h2 class="section-title">Featured Collections</h2>
+        <p class="section-subtitle">
+          Curated capsules that celebrate love, legacy, and luminous everyday luxury.
+        </p>
+        <div class="grid grid-3" style="margin-top: 32px">
+          {% for collection in collections %}
+          <article class="card">
+            <h3 class="product-title">{{ collection.name }}</h3>
+            <p>{{ collection.description|truncatewords:10 }}</p>
+            <a class="btn btn-outline" href="{% url 'collections' %}">Discover</a>
+          </article>
+          {% empty %}
+          <!-- Fallback if no collections -->
+          <article class="card">
+            <h3 class="product-title">Bridal Lumière</h3>
+            <p>Graceful silhouettes for weddings that deserve eternal brilliance.</p>
+            <a class="btn btn-outline" href="{% url 'collections' %}">Discover</a>
+          </article>
+          <article class="card">
+            <h3 class="product-title">Eternal Engagement</h3>
+            <p>Statement solitaires and halos sculpted to capture forever.</p>
+            <a class="btn btn-outline" href="{% url 'collections' %}">Discover</a>
+          </article>
+          <article class="card">
+            <h3 class="product-title">Everyday Radiance</h3>
+            <p>Delicate layers and modern essentials for elevated moments.</p>
+            <a class="btn btn-outline" href="{% url 'collections' %}">Discover</a>
+          </article>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
+    <!-- Best Sellers -->
+    <section class="section fade-in" style="background: var(--ivory)">
+      <div class="container">
+        <h2 class="section-title">Best Sellers</h2>
+        <div class="grid grid-3" style="margin-top: 32px">
+          {% for product in featured_products %}
+          <article class="card product-card">
+            <img
+              src="{{ product.image.url }}"
+              alt="{{ product.name }}"
+              loading="lazy"
+              data-lightbox-trigger
+              style="width: 100%; height: 300px; object-fit: cover;"
+            />
+            <div class="product-info">
+              <h3 class="product-title">{{ product.name }}</h3>
+              <p class="price">₦{{ product.price }}</p>
+              <a class="btn btn-outline" href="{% url 'product_detail' product.slug %}">View Details</a>
+            </div>
+          </article>
+          {% empty %}
+          <p>No featured products available.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
+    <!-- Brand Storytelling -->
+    <section class="section fade-in">
+      <div class="container story">
+        <h2 class="section-title">Crafted for Life’s Finest Moments</h2>
+        <p class="section-subtitle">
+          Kay’s Lumière blends heritage craft with contemporary refinement, ensuring
+          every setting, clasp, and facet is perfected for a lifetime of celebration.
+        </p>
+        <div class="grid grid-3">
+          <div>
+            <h3 class="product-title">Master Artisanship</h3>
+            <p>
+              Our ateliers fuse hand-finishing, precision metallurgy, and bespoke
+              detailing for heirloom-worthy pieces.
+            </p>
+          </div>
+          <div>
+            <h3 class="product-title">Ethical Excellence</h3>
+            <p>
+              We source responsibly and certify every diamond, ensuring beauty with
+              integrity.
+            </p>
+          </div>
+          <div>
+            <h3 class="product-title">Personal Ritual</h3>
+            <p>
+              Each jewel is packaged with care, from bespoke sizing to personalized
+              engraving.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="section fade-in" style="background: var(--ivory)">
+      <div class="container">
+        <h2 class="section-title">Testimonials</h2>
+        <div class="grid grid-3" style="margin-top: 32px">
+          <div class="card testimonial">
+            “The craftsmanship is unrivaled. My engagement ring feels like pure art.”
+            <p>— Temilade, Lagos</p>
+          </div>
+          <div class="card testimonial">
+            “Every detail feels luxurious, from the design to the presentation box.”
+            <p>— Chinedu, Abuja</p>
+          </div>
+          <div class="card testimonial">
+            “Kay’s Lumière delivered a timeless piece that will stay in our family.”
+            <p>— Hadiza, Kano</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Gallery -->
+    <section class="section fade-in">
+      <div class="container">
+        <h2 class="section-title">Lumière Gallery</h2>
+        <p class="section-subtitle">
+          A glimpse into our atelier moments, styled for an editorial finish.
+        </p>
+        <div class="grid grid-4 gallery" style="margin-top: 32px">
+          <img
+            src="{% static 'images/product-1.jpg' %}"
+            alt="Editorial jewelry styling"
+            loading="lazy"
+            data-lightbox-trigger
+          />
+          <img
+            src="{% static 'images/product-2.jpg' %}"
+            alt="Gold jewelry close-up"
+            loading="lazy"
+            data-lightbox-trigger
+          />
+          <img
+            src="{% static 'images/product-3.jpg' %}"
+            alt="Diamond setting detail"
+            loading="lazy"
+            data-lightbox-trigger
+          />
+          <img
+            src="{% static 'images/product-2.jpg' %}"
+            alt="Luxury jewelry tray"
+            loading="lazy"
+            data-lightbox-trigger
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- Newsletter -->
+    <section class="section fade-in">
+      <div class="container newsletter">
+        <div>
+          <h2 class="section-title">Stay in the Lumière</h2>
+          <p class="section-subtitle">
+            Receive private previews, couture launches, and styling notes curated for you.
+          </p>
+        </div>
+        <form>
+          <label class="sr-only" for="newsletter-email">Email</label>
+          <input
+            class="field"
+            type="email"
+            id="newsletter-email"
+            placeholder="Email address"
+            aria-label="Email address"
+            required
+          />
+          <button class="btn btn-gold" type="submit">Join the List</button>
+        </form>
+      </div>
+    </section>
+{% endblock %}

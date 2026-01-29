@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <!-- Hero -->
+    <section class="page-hero">
+      <div class="container editorial-animate">
+        <span class="pill">Shop</span>
+        <h1>Fine jewelry crafted for luminous living.</h1>
+        <p class="section-subtitle">
+          Curate your jewelry wardrobe with signature pieces, bespoke artistry, and
+          certified stones.
+        </p>
+      </div>
+    </section>
+
+    <!-- Filters + Product Grid -->
+    <section class="section fade-in">
+      <div class="container">
+        <div class="filter-bar" aria-label="Product filters">
+          <a href="{% url 'shop' %}" class="filter-btn {% if not request.GET.category %}active{% endif %}">All</a>
+          {% for cat in categories %}
+          <a href="{% url 'shop' %}?category={{ cat.slug }}" class="filter-btn {% if request.GET.category == cat.slug %}active{% endif %}">{{ cat.name }}</a>
+          {% endfor %}
+        </div>
+
+        <div class="grid grid-3">
+          {% for product in products %}
+          <article class="card product-card" data-category="{{ product.category.slug }}">
+            <img
+              src="{{ product.image.url }}"
+              alt="{{ product.name }}"
+              loading="lazy"
+              data-lightbox-trigger
+              style="width: 100%; height: 300px; object-fit: cover;"
+            />
+            <div class="product-info">
+              <h3 class="product-title">{{ product.name }}</h3>
+              <p class="price">₦{{ product.price }}</p>
+              <div style="display: flex; gap: 10px; flex-wrap: wrap">
+                <button class="btn btn-outline" onclick="addToCart({{ product.id }})">
+                  Add to Cart
+                </button>
+                <a class="btn" href="{% url 'product_detail' product.slug %}">View Details</a>
+              </div>
+            </div>
+          </article>
+          {% empty %}
+          <p>No products found in this category.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Simple add to cart function that uses the API
+    function addToCart(productId) {
+        if (!userIsAuthenticated) {
+            window.location.href = "{% url 'login' %}?next=" + window.location.pathname;
+            return;
+        }
+
+        fetch("{% url 'add_to_cart' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrftoken
+            },
+            body: JSON.stringify({
+                product_id: productId,
+                quantity: 1
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert(data.error);
+            } else {
+                alert(data.message);
+                // Update cart count
+                document.querySelectorAll('[data-cart-count]').forEach(el => {
+                    el.textContent = data.cart_count;
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+</script>
+{% endblock %}

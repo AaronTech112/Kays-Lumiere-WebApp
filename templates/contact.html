@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <!-- Hero -->
+    <section class="page-hero">
+      <div class="container editorial-animate">
+        <span class="pill">Contact</span>
+        <h1>Let’s craft something luminous.</h1>
+        <p class="section-subtitle">
+          Speak with our concierge for bespoke commissions, private fittings, and
+          luxury gifting.
+        </p>
+      </div>
+    </section>
+
+    <!-- Contact Form + Concierge -->
+    <section class="section fade-in">
+      <div class="container contact-grid">
+        <form class="card" aria-label="Contact form">
+          <h2 class="section-title">Send a Message</h2>
+          <label for="name">Full Name</label>
+          <input class="field" id="name" type="text" placeholder="Your name" required />
+          <label for="email">Email</label>
+          <input class="field" id="email" type="email" placeholder="Email address" required />
+          <label for="message">Message</label>
+          <textarea
+            class="field"
+            id="message"
+            rows="4"
+            placeholder="Tell us about your vision"
+            required
+          ></textarea>
+          <button class="btn btn-gold" type="submit">Send Inquiry</button>
+        </form>
+        <div class="card">
+          <h2 class="section-title">Concierge</h2>
+          <p>
+            WhatsApp us for immediate assistance, custom requests, or schedule a
+            private appointment.
+          </p>
+          <a class="btn" href="https://wa.me/2340000000000" aria-label="WhatsApp concierge">
+            WhatsApp Concierge
+          </a>
+        </div>
+      </div>
+    </section>
+{% endblock %}
