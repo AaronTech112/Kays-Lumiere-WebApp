@@ -32,11 +32,11 @@
                 </div>
               {% endif %}
               
-              <label for="username">Username</label>
-              <input class="field" id="username" name="username" type="text" placeholder="Username" required />
+              <label for="{{ form.username.id_for_label }}">Email</label>
+              {{ form.username }}
               
-              <label for="password">Password</label>
-              <input class="field" id="password" name="password" type="password" placeholder="••••••••" required />
+              <label for="{{ form.password.id_for_label }}">Password</label>
+              {{ form.password }}
               
               <input type="hidden" name="next" value="{{ next }}">
               

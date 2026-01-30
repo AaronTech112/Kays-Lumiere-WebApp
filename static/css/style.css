@@ -814,13 +814,22 @@ body.nav-open .nav-toggle span:nth-child(3) {
 .auth-shell {
   background: var(--ivory);
   border-radius: var(--radius);
-  padding: 48px;
+  padding: 24px;
+}
+
+.auth-shell.full-screen-auth {
+  width: 100%;
+  max-width: 100%;
+  border-radius: 0;
+  padding-left: 0;
+  padding-right: 0;
+  margin: 0;
 }
 
 .auth-grid {
   display: grid;
-  gap: 36px;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
 }
 
 .auth-card form {

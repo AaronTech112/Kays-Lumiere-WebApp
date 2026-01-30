@@ -11,7 +11,14 @@ function toggleNav() {
   const isOpen = navDrawer.getAttribute("aria-hidden") === "false";
   navDrawer.setAttribute("aria-hidden", isOpen);
   navOverlay.setAttribute("aria-hidden", isOpen);
-  document.body.style.overflow = isOpen ? "" : "hidden";
+  
+  if (!isOpen) {
+    document.body.classList.add("nav-open");
+    document.body.style.overflow = "hidden";
+  } else {
+    document.body.classList.remove("nav-open");
+    document.body.style.overflow = "";
+  }
 }
 
 if (navToggle) {
