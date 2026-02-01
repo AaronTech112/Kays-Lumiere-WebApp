@@ -39,7 +39,11 @@ def add_to_cart(request):
             # Calculate total items
             total_items = sum(item.quantity for item in cart.items.all())
             
-            return JsonResponse({'status': 'success', 'cart_count': total_items})
+            return JsonResponse({
+                'status': 'success', 
+                'cart_count': total_items,
+                'message': 'Item added to cart successfully'
+            })
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
     return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
@@ -47,7 +51,11 @@ def add_to_cart(request):
 @login_required
 def cart_view(request):
     cart, created = Cart.objects.get_or_create(user=request.user)
-    return render(request, 'cart.html', {'cart': cart})
+    return render(request, 'cart.html', {
+        'cart': cart,
+        'cart_items': cart.items.all(),
+        'total_price': cart.total_price
+    })
 
 @login_required
 def remove_from_cart(request):
