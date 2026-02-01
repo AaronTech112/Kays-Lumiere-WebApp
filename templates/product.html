@@ -38,7 +38,14 @@
           
           <div class="detail-block">
             <h2 class="section-title">Price</h2>
+            {% if product.discount_price and product.discount_price < product.price %}
+            <p class="price" data-product-price>
+              <span style="text-decoration: line-through; color: #999; margin-right: 8px; font-size: 0.8em;">₦{{ product.price }}</span>
+              <span style="color: var(--gold); font-weight: bold;">₦{{ product.discount_price }}</span>
+            </p>
+            {% else %}
             <p class="price" data-product-price>₦{{ product.price }}</p>
+            {% endif %}
           </div>
 
           <div class="detail-block">
@@ -62,6 +69,56 @@
       </div>
     </section>
 
+    <!-- FAQs -->
+    {% if faqs %}
+    <section class="section fade-in">
+      <div class="container">
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        <div class="faq-list" style="margin-top: 32px; max-width: 800px;">
+          {% for faq in faqs %}
+          <div class="faq-item" style="margin-bottom: 24px; border-bottom: 1px solid #eee; padding-bottom: 24px;">
+            <h3 style="font-size: 1.2rem; margin-bottom: 12px; color: var(--gold);">{{ faq.question }}</h3>
+            <p style="color: #555; line-height: 1.6;">{{ faq.answer }}</p>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+    {% endif %}
+
+    <!-- Recommended Products -->
+    {% if recommended_products %}
+    <section class="section fade-in">
+      <div class="container">
+        <h2 class="section-title">Recommended For You</h2>
+        <div class="grid grid-3" style="margin-top: 32px">
+          {% for product in recommended_products %}
+          <article class="card product-card">
+            <img
+              src="{{ product.image.url }}"
+              alt="{{ product.name }}"
+              loading="lazy"
+              style="width: 100%; height: 300px; object-fit: cover;"
+            />
+            <div class="product-info">
+              <h3 class="product-title">{{ product.name }}</h3>
+              {% if product.discount_price and product.discount_price < product.price %}
+              <p class="price">
+                <span style="text-decoration: line-through; color: #999; margin-right: 8px; font-size: 0.9em;">₦{{ product.price }}</span>
+                <span style="color: var(--gold); font-weight: bold;">₦{{ product.discount_price }}</span>
+              </p>
+              {% else %}
+              <p class="price">₦{{ product.price }}</p>
+              {% endif %}
+              <a class="btn btn-outline" href="{% url 'product_detail' product.slug %}">View Details</a>
+            </div>
+          </article>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+    {% endif %}
+
     <!-- Related Products -->
     {% if related_products %}
     <section class="section fade-in" style="background: var(--ivory)">
@@ -78,7 +135,14 @@
             />
             <div class="product-info">
               <h3 class="product-title">{{ related.name }}</h3>
+              {% if related.discount_price and related.discount_price < related.price %}
+              <p class="price">
+                <span style="text-decoration: line-through; color: #999; margin-right: 8px; font-size: 0.9em;">₦{{ related.price }}</span>
+                <span style="color: var(--gold); font-weight: bold;">₦{{ related.discount_price }}</span>
+              </p>
+              {% else %}
               <p class="price">₦{{ related.price }}</p>
+              {% endif %}
               <a class="btn btn-outline" href="{% url 'product_detail' related.slug %}">View Details</a>
             </div>
           </article>

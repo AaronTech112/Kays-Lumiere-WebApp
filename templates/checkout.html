@@ -45,15 +45,15 @@
             {% for item in cart.items.all %}
             <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
                 <span>{{ item.product.name }} x {{ item.quantity }}</span>
-                <span>₦{{ item.get_total_price }}</span>
+                <span>₦{{ item.total_price }}</span>
             </div>
             {% endfor %}
           </div>
           
-          <p>Subtotal: <strong>₦{{ cart.get_total_price }}</strong></p>
+          <p>Subtotal: <strong>₦{{ cart.total_price }}</strong></p>
           <p>Delivery: <span id="shipping-cost">Calculated at next step</span></p>
           <hr />
-          <p>Total: <strong id="total-cost">₦{{ cart.get_total_price }}</strong></p>
+          <p>Total: <strong id="total-cost">₦{{ cart.total_price }}</strong></p>
           
           <div style="margin-top: 24px">
             <p>
@@ -84,7 +84,7 @@
         document.getElementById('shipping-cost').textContent = "₦" + shipping;
         
         // Update total (visual only, backend calculates actual)
-        const subtotal = {{ cart.get_total_price }};
+        const subtotal = {{ cart.total_price }};
         document.getElementById('total-cost').textContent = "₦" + (subtotal + shipping);
     });
 

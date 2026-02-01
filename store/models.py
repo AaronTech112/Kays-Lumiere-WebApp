@@ -30,6 +30,7 @@ class Product(models.Model):
     stock_quantity = models.PositiveIntegerField(default=0)
     image = models.ImageField(upload_to='products/')
     is_featured = models.BooleanField(default=False)
+    recommended_products = models.ManyToManyField('self', blank=True, symmetrical=False, related_name='recommended_by')
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -41,3 +42,12 @@ class Product(models.Model):
             self.slug = slugify(self.name)
             # Handle duplicate slugs if necessary (simple version here)
         super().save(*args, **kwargs)
+
+class ProductFAQ(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='faqs')
+    question = models.CharField(max_length=255)
+    answer = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+
+    def __str__(self):
+        return self.question

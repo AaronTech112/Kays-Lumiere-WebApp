@@ -85,7 +85,14 @@
             />
             <div class="product-info">
               <h3 class="product-title">{{ product.name }}</h3>
+              {% if product.discount_price and product.discount_price < product.price %}
+              <p class="price">
+                <span style="text-decoration: line-through; color: #999; margin-right: 8px; font-size: 0.9em;">₦{{ product.price }}</span>
+                <span style="color: var(--gold); font-weight: bold;">₦{{ product.discount_price }}</span>
+              </p>
+              {% else %}
               <p class="price">₦{{ product.price }}</p>
+              {% endif %}
               <a class="btn btn-outline" href="{% url 'product_detail' product.slug %}">View Details</a>
             </div>
           </article>

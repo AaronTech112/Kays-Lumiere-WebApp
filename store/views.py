@@ -25,9 +25,14 @@ def shop_view(request):
 def product_detail_view(request, slug):
     product = get_object_or_404(Product, slug=slug)
     related_products = Product.objects.filter(category=product.category).exclude(id=product.id)[:4]
+    recommended_products = product.recommended_products.all()
+    faqs = product.faqs.all()
+    
     return render(request, 'product.html', {
         'product': product,
-        'related_products': related_products
+        'related_products': related_products,
+        'recommended_products': recommended_products,
+        'faqs': faqs
     })
 
 def collections_view(request):

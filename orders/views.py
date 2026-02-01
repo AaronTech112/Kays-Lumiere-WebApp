@@ -12,7 +12,12 @@ import uuid
 @login_required
 def cart_view(request):
     cart, created = Cart.objects.get_or_create(user=request.user)
-    return render(request, 'cart.html', {'cart': cart})
+    context = {
+        'cart': cart,
+        'cart_items': cart.items.all(),
+        'total_price': cart.total_price
+    }
+    return render(request, 'cart.html', context)
 
 @login_required
 def add_to_cart(request):
