@@ -54,6 +54,10 @@ class Order(models.Model):
     def __str__(self):
         return f"Order {self.order_id} - {self.status}"
 
+    @property
+    def subtotal(self):
+        return self.total_amount - self.shipping_fee
+
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)

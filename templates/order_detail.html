@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <section class="page-hero">
+      <div class="container editorial-animate">
+        <span class="pill">Orders</span>
+        <h1>Track your order.</h1>
+        <p class="section-subtitle">
+          View delivery progress and details for Order #{{ order.order_id }}.
+        </p>
+      </div>
+    </section>
+
+    <section class="section fade-in">
+      <div class="container order-shell">
+        <div class="order-grid" style="grid-template-columns: 1fr;">
+          <div class="card order-card">
+            <div class="order-header">
+              <div>
+                <h2 class="section-title">Order #{{ order.order_id }}</h2>
+                <p class="auth-muted">Placed {{ order.created_at|date:"M j, Y" }}</p>
+              </div>
+              <span class="tag">{{ order.get_status_display }}</span>
+            </div>
+            <div class="order-meta">
+              <div>
+                <p class="product-title">Delivery Address</p>
+                <p class="auth-muted">{{ order.shipping_address }}<br>{{ order.city }}, {{ order.state }}</p>
+              </div>
+              <div>
+                <p class="product-title">Carrier</p>
+                <p class="auth-muted">Lumière Secure Logistics</p>
+              </div>
+              <div>
+                <p class="product-title">Payment Ref</p>
+                <p class="auth-muted">{{ order.flutterwave_ref|default:"N/A" }}</p>
+              </div>
+            </div>
+            <div class="order-items">
+              {% for item in order.items.all %}
+              <div class="order-item">
+                <span>{{ item.quantity }} x {{ item.product.name }}</span>
+                <span>₦{{ item.price }}</span>
+              </div>
+              {% endfor %}
+            </div>
+            <div class="order-total">
+              <span>Subtotal</span>
+              <span>₦{{ order.total_amount|add:"-2500" }}</span> <!-- Approximation since we don't store subtotal separately -->
+            </div>
+            <div class="order-total">
+                <span>Shipping</span>
+                <span>₦{{ order.shipping_fee }}</span>
+            </div>
+            <div class="order-total" style="font-size: 1.2em; margin-top: 10px; border-top: 1px solid #eee; padding-top: 10px;">
+              <span>Total</span>
+              <span>₦{{ order.total_amount }}</span>
+            </div>
+          </div>
+          
+          <div class="card order-card">
+            <h2 class="section-title">Delivery Status</h2>
+            <div class="order-tracker">
+              <!-- Order Confirmed: Active if Paid, Shipped, or Delivered -->
+              <div class="status-step {% if order.status in 'Paid,Shipped,Delivered' %}active{% endif %}">
+                <span class="status-dot"></span>
+                <div>
+                  <p class="product-title">Order Confirmed</p>
+                  <p class="auth-muted">Payment verified</p>
+                </div>
+              </div>
+              
+              <!-- Processing: Active if Paid, Shipped, or Delivered -->
+              <div class="status-step {% if order.status in 'Paid,Shipped,Delivered' %}active{% endif %}">
+                <span class="status-dot"></span>
+                <div>
+                  <p class="product-title">Atelier Preparation</p>
+                  <p class="auth-muted">Packaging and authentication</p>
+                </div>
+              </div>
+              
+              <!-- In Transit: Active if Shipped or Delivered -->
+              <div class="status-step {% if order.status in 'Shipped,Delivered' %}active{% endif %}">
+                <span class="status-dot"></span>
+                <div>
+                  <p class="product-title">In Transit</p>
+                  <p class="auth-muted">Courier pickup confirmed</p>
+                </div>
+              </div>
+              
+              <!-- Delivered: Active if Delivered -->
+              <div class="status-step {% if order.status == 'Delivered' %}active{% endif %}">
+                <span class="status-dot"></span>
+                <div>
+                  <p class="product-title">Delivered</p>
+                  <p class="auth-muted">Package delivered successfully</p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="order-note">
+              <p class="auth-muted">
+                For bespoke commissions, expect a concierge update within 48 hours.
+              </p>
+              <a class="btn btn-outline" href="{% url 'contact' %}">Chat with Concierge</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+{% endblock %}

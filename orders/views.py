@@ -9,76 +9,95 @@ import json
 import requests
 import uuid
 
-@login_required
-def cart_view(request):
-    cart, created = Cart.objects.get_or_create(user=request.user)
-    context = {
-        'cart': cart,
-        'cart_items': cart.items.all(),
-        'total_price': cart.total_price
-    }
-    return render(request, 'cart.html', context)
+def calculate_shipping(city):
+    # Simple logic for now
+    if not city:
+        return 2500
+    city = city.lower()
+    if 'lagos' in city:
+        return 1000
+    return 2500
 
 @login_required
 def add_to_cart(request):
     if request.method == 'POST':
-        data = json.loads(request.body)
-        product_id = data.get('product_id')
-        quantity = int(data.get('quantity', 1))
-        
-        product = get_object_or_404(Product, id=product_id)
-        
-        if product.stock_quantity < quantity:
-            return JsonResponse({'error': 'Not enough stock'}, status=400)
+        try:
+            data = json.loads(request.body)
+            product_id = data.get('product_id')
+            quantity = int(data.get('quantity', 1))
             
-        cart, created = Cart.objects.get_or_create(user=request.user)
-        cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
-        
-        if not created:
-            cart_item.quantity += quantity
-        else:
-            cart_item.quantity = quantity
+            product = get_object_or_404(Product, id=product_id)
+            cart, created = Cart.objects.get_or_create(user=request.user)
             
-        cart_item.save()
-        
-        return JsonResponse({'message': 'Item added to cart', 'cart_count': cart.items.count()})
-    return JsonResponse({'error': 'Invalid request'}, status=400)
+            cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
+            if not created:
+                cart_item.quantity += quantity
+            else:
+                cart_item.quantity = quantity
+            cart_item.save()
+            
+            # Calculate total items
+            total_items = sum(item.quantity for item in cart.items.all())
+            
+            return JsonResponse({'status': 'success', 'cart_count': total_items})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
+
+@login_required
+def cart_view(request):
+    cart, created = Cart.objects.get_or_create(user=request.user)
+    return render(request, 'cart.html', {'cart': cart})
 
 @login_required
 def remove_from_cart(request):
     if request.method == 'POST':
         data = json.loads(request.body)
-        item_id = data.get('item_id')
-        cart_item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
-        cart_item.delete()
-        return JsonResponse({'message': 'Item removed'})
-    return JsonResponse({'error': 'Invalid request'}, status=400)
+        product_id = data.get('product_id')
+        cart = get_object_or_404(Cart, user=request.user)
+        item = get_object_or_404(CartItem, cart=cart, product_id=product_id)
+        item.delete()
+        
+        return JsonResponse({
+            'status': 'success', 
+            'cart_total': float(cart.total_price),
+            'cart_count': cart.items.count()
+        })
+    return JsonResponse({'status': 'error'}, status=400)
 
 @login_required
 def update_cart_quantity(request):
     if request.method == 'POST':
         data = json.loads(request.body)
-        item_id = data.get('item_id')
-        quantity = int(data.get('quantity'))
+        product_id = data.get('product_id')
+        action = data.get('action')
         
-        if quantity < 1:
-            return JsonResponse({'error': 'Quantity must be positive'}, status=400)
-            
-        cart_item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
+        cart = get_object_or_404(Cart, user=request.user)
+        item = get_object_or_404(CartItem, cart=cart, product_id=product_id)
         
-        if cart_item.product.stock_quantity < quantity:
-            return JsonResponse({'error': 'Not enough stock'}, status=400)
-            
-        cart_item.quantity = quantity
-        cart_item.save()
-        return JsonResponse({'message': 'Cart updated'})
-    return JsonResponse({'error': 'Invalid request'}, status=400)
-
-def calculate_shipping(city):
-    # Simple logic: Lagos = 1000, others = 2500
-    if city and 'lagos' in city.lower():
-        return 1000.00
-    return 2500.00
+        if action == 'increase':
+            item.quantity += 1
+        elif action == 'decrease':
+            item.quantity -= 1
+            if item.quantity < 1:
+                item.delete()
+                return JsonResponse({
+                    'status': 'success',
+                    'cart_total': float(cart.total_price),
+                    'cart_count': cart.items.count(),
+                    'removed': True
+                })
+        
+        item.save()
+        
+        return JsonResponse({
+            'status': 'success',
+            'item_total': float(item.total_price),
+            'cart_total': float(cart.total_price),
+            'cart_count': cart.items.count(),
+            'quantity': item.quantity
+        })
+    return JsonResponse({'status': 'error'}, status=400)
 
 @login_required
 def checkout_view(request):
@@ -88,8 +107,7 @@ def checkout_view(request):
         
     context = {
         'cart': cart,
-        'flutterwave_public_key': settings.FLUTTERWAVE_PUBLIC_KEY,
-        'user': request.user
+        'flutterwave_public_key': settings.FLUTTERWAVE_PUBLIC_KEY
     }
     return render(request, 'checkout.html', context)
 
@@ -137,42 +155,33 @@ def place_order(request):
         })
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
+@csrf_exempt
 @login_required
 def verify_payment(request):
-    if request.method != 'POST':
-        return JsonResponse({'error': 'Invalid request method'}, status=400)
-
-    try:
+    if request.method == 'POST':
         data = json.loads(request.body)
         transaction_id = data.get('transaction_id')
-        order_id = data.get('order_id')
-
-        if not transaction_id or not order_id:
-            return JsonResponse({'error': 'Missing transaction_id or order_id'}, status=400)
-
-        # Verify transaction with Flutterwave
-        headers = {
-            'Authorization': f'Bearer {settings.FLUTTERWAVE_SECRET_KEY}',
-            'Content-Type': 'application/json',
-        }
-        url = f"https://api.flutterwave.com/v3/transactions/{transaction_id}/verify"
+        tx_ref = data.get('tx_ref')
         
-        response = requests.get(url, headers=headers)
-        res_data = response.json()
-        
-        if res_data['status'] == 'success' and res_data['data']['status'] == 'successful':
-            amount_paid = res_data['data']['amount']
-            currency = res_data['data']['currency']
-            tx_ref = res_data['data']['tx_ref']
+        try:
+            # Verify with Flutterwave
+            headers = {
+                'Authorization': f'Bearer {settings.FLUTTERWAVE_SECRET_KEY}',
+                'Content-Type': 'application/json',
+            }
+            response = requests.get(
+                f'https://api.flutterwave.com/v3/transactions/{transaction_id}/verify',
+                headers=headers
+            )
+            response_data = response.json()
             
-            # Verify order matches
-            if tx_ref != order_id:
-                 return JsonResponse({'error': 'Transaction reference mismatch'}, status=400)
-
-            order = get_object_or_404(Order, order_id=order_id)
-            
-            if float(amount_paid) >= float(order.total_amount) and currency == 'NGN':
-                if order.status != 'Paid':
+            if response_data['status'] == 'success':
+                amount = response_data['data']['amount']
+                
+                order = Order.objects.get(order_id=tx_ref)
+                
+                # Check if amount matches (allowing for small floating point differences)
+                if abs(float(order.total_amount) - float(amount)) < 1.0:
                     order.status = 'Paid'
                     order.flutterwave_ref = str(transaction_id)
                     order.save()
@@ -185,16 +194,22 @@ def verify_payment(request):
                     # Clear cart
                     Cart.objects.filter(user=request.user).delete()
                     
-                return JsonResponse({'status': 'success', 'message': 'Payment verified successfully'})
+                    return JsonResponse({'status': 'success', 'message': 'Payment verified successfully'})
+                else:
+                    return JsonResponse({'error': 'Payment verification failed: Amount mismatch'}, status=400)
             else:
-                return JsonResponse({'error': 'Payment verification failed: Amount mismatch'}, status=400)
-        else:
-            return JsonResponse({'error': 'Payment verification failed at gateway'}, status=400)
+                return JsonResponse({'error': 'Payment verification failed at gateway'}, status=400)
             
-    except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+            
+    return JsonResponse({'error': 'Invalid request'}, status=400)
 
 @login_required
 def order_history(request):
-    orders = Order.objects.filter(user=request.user).order_by('-created_at')
-    return render(request, 'orders.html', {'orders': orders})
+    return redirect('profile')
+
+@login_required
+def order_detail(request, order_id):
+    order = get_object_or_404(Order, order_id=order_id, user=request.user)
+    return render(request, 'order_detail.html', {'order': order})

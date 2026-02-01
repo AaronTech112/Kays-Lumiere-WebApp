@@ -38,3 +38,6 @@ def product_detail_view(request, slug):
 def collections_view(request):
     collections = Collection.objects.all()
     return render(request, 'collections.html', {'collections': collections})
+
+def contact_view(request):
+    return render(request, 'contact.html')

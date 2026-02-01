@@ -5,4 +5,5 @@ urlpatterns = [
     path('', views.shop_view, name='shop'),
     path('product/<slug:slug>/', views.product_detail_view, name='product_detail'),
     path('collections/', views.collections_view, name='collections'),
+    path('contact/', views.contact_view, name='contact'),
 ]

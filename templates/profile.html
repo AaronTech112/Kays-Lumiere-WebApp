@@ -57,6 +57,7 @@
                 <p class="auth-muted">{{ order.created_at|date:"F j, Y" }}</p>
                 <p>Total: <strong>₦{{ order.total_amount }}</strong></p>
                 <p>{{ order.items.count }} items</p>
+                <a href="{% url 'order_detail' order.order_id %}" class="btn btn-outline" style="margin-top: 10px; width: 100%; text-align: center;">Track Order</a>
               </div>
               {% endfor %}
             </div>
