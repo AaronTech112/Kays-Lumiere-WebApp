@@ -1,0 +1,111 @@
+
+/* Product Modal */
+.product-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition);
+  backdrop-filter: blur(4px);
+}
+
+.product-modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.product-modal {
+  background: #fff;
+  width: 90%;
+  max-width: 500px;
+  padding: 40px;
+  border-radius: var(--radius);
+  position: relative;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  transform: translateY(20px);
+  transition: transform var(--transition);
+  border: 1px solid var(--gold);
+}
+
+.product-modal-overlay.active .product-modal {
+  transform: translateY(0);
+}
+
+.product-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--muted);
+  padding: 4px;
+  line-height: 1;
+  transition: color var(--transition);
+}
+
+.product-modal-close:hover {
+  color: var(--ink);
+}
+
+.product-modal-title {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  margin-bottom: 16px;
+  color: var(--ink);
+}
+
+.product-modal-text {
+  color: var(--muted);
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.product-modal-list {
+  text-align: left;
+  list-style: none;
+  padding: 0;
+  margin: 0 auto;
+  display: inline-block;
+  color: var(--ink);
+}
+
+.product-modal-list li {
+  margin-bottom: 12px;
+  padding-left: 24px;
+  position: relative;
+}
+
+.product-modal-list li::before {
+  content: '✦';
+  position: absolute;
+  left: 0;
+  color: var(--gold);
+  font-size: 0.8rem;
+  top: 4px;
+}
+
+.product-modal-sublist {
+  list-style: none;
+  padding-left: 20px;
+  margin-top: 8px;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+
+.product-modal-sublist li {
+  margin-bottom: 8px;
+  padding-left: 16px;
+}
+
+.product-modal-sublist li::before {
+  content: '—';
+  color: var(--border);
+}

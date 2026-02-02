@@ -154,10 +154,65 @@
       </div>
     </section>
     {% endif %}
+
+    <!-- Product Modal -->
+    <div class="product-modal-overlay" id="productModalOverlay">
+      <div class="product-modal">
+        <button class="product-modal-close" id="productModalClose" aria-label="Close modal">×</button>
+        <h3 class="product-modal-title">Limited Release</h3>
+        <p class="product-modal-text">
+          A limited release of Kay’s Lumière pieces—crafted for moments that deserve permanence.
+        </p>
+        <div style="text-align: left; max-width: 320px; margin: 0 auto;">
+            <p style="font-weight: 600; margin-bottom: 12px; font-family: var(--font-serif);">What accompanies this piece</p>
+            <ul class="product-modal-list">
+            <li>
+                A certificate of authenticity
+                <ul class="product-modal-sublist">
+                <li>Luxury packaging with handwritten message card</li>
+                <li>Priority dispatch on or before Valentine’s Day</li>
+                </ul>
+            </li>
+            </ul>
+        </div>
+      </div>
+    </div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
+    // Product Modal Logic
+    document.addEventListener('DOMContentLoaded', () => {
+        const modalOverlay = document.getElementById('productModalOverlay');
+        const modalClose = document.getElementById('productModalClose');
+        
+        if (!modalOverlay || !modalClose) {
+            return;
+        }
+
+        setTimeout(() => {
+            modalOverlay.classList.add('active');
+        }, 1000);
+
+        const closeModal = () => {
+            modalOverlay.classList.remove('active');
+        };
+
+        modalClose.addEventListener('click', closeModal);
+
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) {
+                closeModal();
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modalOverlay.classList.contains('active')) {
+                closeModal();
+            }
+        });
+    });
+
     const qtyInput = document.getElementById('quantity');
     const minusBtn = document.getElementById('qty-minus');
     const plusBtn = document.getElementById('qty-plus');
