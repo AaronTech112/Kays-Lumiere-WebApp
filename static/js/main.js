@@ -1,4 +1,4 @@
-// Kay's Lumière Main Script
+// Kays Lumière Main Script
 // Handles UI interactions. Cart and Product logic is now server-side.
 
 // Navigation Toggle
