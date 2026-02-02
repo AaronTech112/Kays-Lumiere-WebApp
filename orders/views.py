@@ -170,6 +170,11 @@ def verify_payment(request):
         data = json.loads(request.body)
         transaction_id = data.get('transaction_id')
         tx_ref = data.get('tx_ref')
+        order_id = data.get('order_id')
+        lookup_ref = tx_ref or order_id
+
+        if not transaction_id or not lookup_ref:
+            return JsonResponse({'status': 'error', 'message': 'Missing payment reference', 'error': 'Missing payment reference'}, status=400)
         
         try:
             # Verify with Flutterwave
@@ -179,14 +184,25 @@ def verify_payment(request):
             }
             response = requests.get(
                 f'https://api.flutterwave.com/v3/transactions/{transaction_id}/verify',
-                headers=headers
+                headers=headers,
+                timeout=15
             )
             response_data = response.json()
             
             if response_data['status'] == 'success':
-                amount = response_data['data']['amount']
+                data_obj = response_data.get('data', {})
+                amount = data_obj.get('amount')
+                tx_ref_from_gateway = data_obj.get('tx_ref')
+                transaction_status = data_obj.get('status')
+                order = Order.objects.get(order_id=lookup_ref)
                 
-                order = Order.objects.get(order_id=tx_ref)
+                # Ensure gateway tx_ref matches our order reference
+                if tx_ref_from_gateway and tx_ref_from_gateway != str(order.order_id):
+                    return JsonResponse({'status': 'error', 'message': 'Payment verification failed: Reference mismatch', 'error': 'Payment verification failed: Reference mismatch'}, status=400)
+                
+                # Ensure the gateway reports a successful charge
+                if transaction_status != 'successful':
+                    return JsonResponse({'status': 'error', 'message': 'Payment verification failed: Transaction not successful', 'error': 'Payment verification failed: Transaction not successful'}, status=400)
                 
                 # Check if amount matches (allowing for small floating point differences)
                 if abs(float(order.total_amount) - float(amount)) < 1.0:
@@ -204,14 +220,16 @@ def verify_payment(request):
                     
                     return JsonResponse({'status': 'success', 'message': 'Payment verified successfully'})
                 else:
-                    return JsonResponse({'error': 'Payment verification failed: Amount mismatch'}, status=400)
+                    return JsonResponse({'status': 'error', 'message': 'Payment verification failed: Amount mismatch', 'error': 'Payment verification failed: Amount mismatch'}, status=400)
             else:
-                return JsonResponse({'error': 'Payment verification failed at gateway'}, status=400)
+                return JsonResponse({'status': 'error', 'message': 'Payment verification failed at gateway', 'error': 'Payment verification failed at gateway'}, status=400)
             
+        except requests.exceptions.RequestException:
+            return JsonResponse({'status': 'pending', 'message': 'Verification pending. Please check your order status shortly.'}, status=202)
         except Exception as e:
-            return JsonResponse({'error': str(e)}, status=500)
+            return JsonResponse({'status': 'error', 'message': str(e), 'error': str(e)}, status=500)
             
-    return JsonResponse({'error': 'Invalid request'}, status=400)
+    return JsonResponse({'status': 'error', 'message': 'Invalid request', 'error': 'Invalid request'}, status=400)
 
 @login_required
 def order_history(request):

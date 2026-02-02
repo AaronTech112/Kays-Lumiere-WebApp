@@ -146,7 +146,6 @@
                 return;
             }
             
-            // 2. Initiate Flutterwave Payment
             makePayment(data.order_id, data.amount, data.email, data.tx_ref, fullName, phone);
         })
         .catch(error => {
@@ -171,8 +170,7 @@
             },
             callback: function (data) {
                 console.log("payment callback:", data);
-                // Verify payment on backend
-                verifyPayment(data.transaction_id, orderId);
+                verifyPayment(data.transaction_id || data.id, txRef, orderId);
             },
             onclose: function() {
                 payBtn.disabled = false;
@@ -187,7 +185,7 @@
         });
     }
     
-    function verifyPayment(transactionId, orderId) {
+    function verifyPayment(transactionId, txRef, orderId) {
         fetch("{% url 'verify_payment' %}", {
             method: "POST",
             headers: {
@@ -196,6 +194,7 @@
             },
             body: JSON.stringify({
                 transaction_id: transactionId,
+                tx_ref: txRef,
                 order_id: orderId
             })
         })
@@ -203,12 +202,21 @@
         .then(data => {
             if (data.status === 'success') {
                 window.location.href = "{% url 'profile' %}?payment=success";
-            } else {
-                alert("Payment verification failed: " + data.message);
+                return;
             }
+            if (data.status === 'pending') {
+                window.location.href = "{% url 'profile' %}?payment=pending";
+                return;
+            }
+            const message = data.message || data.error || "Payment verification failed.";
+            alert("Payment verification failed: " + message);
+            payBtn.disabled = false;
+            payBtn.textContent = "Place Order & Pay";
         })
         .catch(error => {
             console.error('Error verifying payment:', error);
+            payBtn.disabled = false;
+            payBtn.textContent = "Place Order & Pay";
         });
     }
 </script>
