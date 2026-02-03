@@ -138,6 +138,48 @@ header {
   transition: padding var(--transition), border-color var(--transition), box-shadow var(--transition);
 }
 
+/* Ticker */
+.ticker-container {
+  background: var(--ink);
+  color: var(--ivory);
+  overflow: hidden;
+  padding: 8px 0;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  width: 100%;
+}
+
+.ticker-wrapper {
+  display: flex;
+  width: fit-content;
+  animation: ticker 30s linear infinite;
+}
+
+.ticker-wrapper:hover {
+  animation-play-state: paused;
+}
+
+.ticker-content {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.ticker-item {
+  margin-right: 2rem;
+}
+
+.ticker-divider {
+  margin-right: 2rem;
+  color: var(--gold);
+}
+
+@keyframes ticker {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
 .nav-inner {
   display: flex;
   align-items: center;

@@ -16,6 +16,33 @@
   <body>
     <!-- Header -->
     <header class="header">
+      <!-- Ticker -->
+      <div class="ticker-container">
+        <div class="ticker-wrapper">
+          <div class="ticker-content">
+            <span class="ticker-item">Limited Release: Crafted for moments that deserve permanence</span>
+            <span class="ticker-divider">✦</span>
+            <span class="ticker-item">Certificate of Authenticity Included</span>
+            <span class="ticker-divider">✦</span>
+            <span class="ticker-item">Luxury Packaging & Handwritten Note</span>
+            <span class="ticker-divider">✦</span>
+            <span class="ticker-item">Priority Dispatch for Valentine’s Day</span>
+            <span class="ticker-divider">✦</span>
+          </div>
+          <!-- Duplicate for infinite scroll -->
+          <div class="ticker-content" aria-hidden="true">
+            <span class="ticker-item">Limited Release: Crafted for moments that deserve permanence</span>
+            <span class="ticker-divider">✦</span>
+            <span class="ticker-item">Certificate of Authenticity Included</span>
+            <span class="ticker-divider">✦</span>
+            <span class="ticker-item">Luxury Packaging & Handwritten Note</span>
+            <span class="ticker-divider">✦</span>
+            <span class="ticker-item">Priority Dispatch for Valentine’s Day</span>
+            <span class="ticker-divider">✦</span>
+          </div>
+        </div>
+      </div>
+
       <div class="container nav-inner" aria-label="Primary navigation">
         <a class="logo" href="{% url 'home' %}">
           <img src="{% static 'images/logo.png' %}" alt="Kays Lumière logo" />
