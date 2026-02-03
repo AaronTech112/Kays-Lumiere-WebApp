@@ -342,10 +342,14 @@ body.nav-open .nav-toggle span:nth-child(3) {
   background: linear-gradient(140deg, #fff, var(--ivory));
 }
 
+.hero .container {
+  width: min(1440px, 94%);
+}
+
 .hero-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 48px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 64px;
   align-items: center;
 }
 
@@ -361,9 +365,45 @@ body.nav-open .nav-toggle span:nth-child(3) {
 }
 
 .hero-image {
+  position: relative;
   border-radius: var(--radius);
   overflow: hidden;
   box-shadow: var(--shadow);
+  height: clamp(600px, 85vh, 960px);
+  display: flex;
+}
+
+.hero-image::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, rgba(15, 12, 10, 0.08), rgba(255, 255, 255, 0));
+  pointer-events: none;
+  z-index: 2;
+}
+
+.hero-carousel {
+  display: grid;
+  width: 100%;
+  flex: 1;
+}
+
+.hero-carousel img {
+  grid-area: 1 / 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.hero-carousel img.active {
+  opacity: 1;
+  pointer-events: auto;
+  z-index: 2;
 }
 
 .hero-image img {

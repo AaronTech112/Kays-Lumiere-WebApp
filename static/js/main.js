@@ -60,6 +60,20 @@ document.querySelectorAll('.fade-in, .editorial-animate').forEach(el => {
     observer.observe(el);
 });
 
+const heroCarousel = document.querySelector("[data-hero-carousel]");
+if (heroCarousel) {
+    const slides = heroCarousel.querySelectorAll("img");
+    if (slides.length > 1) {
+        let currentIndex = 0;
+        // Start the carousel
+        setInterval(() => {
+            slides[currentIndex].classList.remove("active");
+            currentIndex = (currentIndex + 1) % slides.length;
+            slides[currentIndex].classList.add("active");
+        }, 3500);
+    }
+}
+
 // Product Thumbs (Product Detail Page)
 const thumbs = document.querySelectorAll("[data-thumb]");
 const mainImage = document.querySelector("[data-main-image]");

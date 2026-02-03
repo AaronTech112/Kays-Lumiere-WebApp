@@ -22,12 +22,27 @@
           </div>
         </div>
         <div class="hero-image editorial-animate">
-          <img
-            src="{% static 'images/home-image-1.jpg' %}"
-            alt="Radiant diamond ring close-up"
-            loading="lazy"
-            data-lightbox-trigger
-          />
+          <div class="hero-carousel" data-hero-carousel>
+            <img
+              src="{% static 'images/home-image-1.jpg' %}"
+              alt="Radiant diamond ring close-up"
+              loading="lazy"
+              data-lightbox-trigger
+              class="active"
+            />
+            <img
+              src="{% static 'images/home-image-2.jpg' %}"
+              alt="Editorial jewelry styling"
+              loading="lazy"
+              data-lightbox-trigger
+            />
+            <img
+              src="{% static 'images/home-image-3.jpg' %}"
+              alt="Gold jewelry close-up"
+              loading="lazy"
+              data-lightbox-trigger
+            />
+          </div>
         </div>
       </div>
     </section>
