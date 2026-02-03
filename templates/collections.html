@@ -19,13 +19,20 @@
     <section class="section fade-in" {% if forloop.counter|divisibleby:2 %}style="background: var(--ivory)"{% endif %}>
       <div class="container grid grid-2">
         {% if forloop.counter|divisibleby:2 %}
+        {% if collection.banner_image %}
         <img
-          src="{{ collection.image.url }}"
+          src="{{ collection.banner_image.url }}"
           alt="{{ collection.name }} styling"
           loading="lazy"
           data-lightbox-trigger
           style="width: 100%; height: 400px; object-fit: cover;"
         />
+        {% else %}
+        <!-- Placeholder or empty div if no image -->
+        <div style="width: 100%; height: 400px; background: #eee; display: flex; align-items: center; justify-content: center;">
+            <span style="color: #aaa;">No Image Available</span>
+        </div>
+        {% endif %}
         <div class="card">
           <h2 class="section-title">{{ collection.name }}</h2>
           <p>{{ collection.description }}</p>
@@ -37,13 +44,19 @@
           <p>{{ collection.description }}</p>
           <a class="btn btn-outline" href="{% url 'shop' %}?category={{ collection.slug }}">Shop {{ collection.name }}</a>
         </div>
+        {% if collection.banner_image %}
         <img
-          src="{{ collection.image.url }}"
+          src="{{ collection.banner_image.url }}"
           alt="{{ collection.name }} styling"
           loading="lazy"
           data-lightbox-trigger
           style="width: 100%; height: 400px; object-fit: cover;"
         />
+        {% else %}
+        <div style="width: 100%; height: 400px; background: #eee; display: flex; align-items: center; justify-content: center;">
+            <span style="color: #aaa;">No Image Available</span>
+        </div>
+        {% endif %}
         {% endif %}
       </div>
     </section>
