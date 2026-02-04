@@ -90,3 +90,29 @@ if (thumbs.length > 0 && mainImage) {
         });
     });
 }
+
+// Product Modal
+const productModal = document.getElementById('productInfoModal');
+if (productModal) {
+    const closeBtn = productModal.querySelector('.product-modal-close');
+    
+    // Open modal on page load
+    setTimeout(() => {
+        productModal.classList.add('active');
+        document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    }, 1000); // Small delay for better UX
+
+    // Close on button click
+    closeBtn.addEventListener('click', () => {
+        productModal.classList.remove('active');
+        document.body.style.overflow = '';
+    });
+
+    // Close on outside click
+    productModal.addEventListener('click', (e) => {
+        if (e.target === productModal) {
+            productModal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    });
+}
