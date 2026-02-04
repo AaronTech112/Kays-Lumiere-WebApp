@@ -23,9 +23,33 @@
               alt="{{ product.name }}"
               data-main-image
               data-lightbox-trigger
-              style="width: 100%; object-fit: cover;"
+              style="width: 100%; object-fit: cover; aspect-ratio: 1/1;"
             />
           </div>
+          {% if product.images.all %}
+          <div class="product-thumbnails">
+             <!-- Main Image Thumbnail -->
+             <div class="thumb-wrapper">
+                <img 
+                    src="{{ product.image.url }}" 
+                    alt="{{ product.name }}" 
+                    data-thumb 
+                    class="active"
+                >
+             </div>
+             
+             <!-- Additional Images -->
+             {% for img in product.images.all %}
+             <div class="thumb-wrapper">
+                <img 
+                    src="{{ img.image.url }}" 
+                    alt="{{ product.name }}" 
+                    data-thumb 
+                >
+             </div>
+             {% endfor %}
+          </div>
+          {% endif %}
         </div>
 
         <div class="product-details">
