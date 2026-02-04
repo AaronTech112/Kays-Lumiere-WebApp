@@ -157,9 +157,13 @@ select {
   position: sticky;
   top: 0;
   z-index: 1000;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(230, 211, 163, 0.3);
+  padding: 0;
+}
+
+.nav-inner {
   padding: 16px 0;
 }
 
@@ -525,14 +529,37 @@ select {
   opacity: 1;
 }
 
+.ticker-container {
+  background: var(--ink);
+  color: var(--ivory);
+  overflow: hidden;
+  padding: 10px 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
 .ticker-wrapper {
   display: flex;
   width: fit-content;
-  animation: ticker 30s linear infinite;
+  animation: ticker 40s linear infinite;
 }
 
 .ticker-wrapper:hover {
   animation-play-state: paused;
+}
+
+.ticker-content {
+  display: flex;
+  align-items: center;
+  gap: 48px;
+  padding-right: 48px;
+  white-space: nowrap;
+}
+
+.ticker-divider {
+  color: var(--gold);
 }
 
 @keyframes ticker {
