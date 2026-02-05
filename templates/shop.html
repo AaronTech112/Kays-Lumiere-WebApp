@@ -65,7 +65,7 @@
     // Simple add to cart function that uses the API
     function addToCart(productId) {
         if (!userIsAuthenticated) {
-            window.location.href = "{% url 'login' %}?next=" + window.location.pathname;
+            window.location.href = "{% url 'signup' %}?next=" + window.location.pathname;
             return;
         }
 

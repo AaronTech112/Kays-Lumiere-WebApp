@@ -223,7 +223,7 @@
 
     addToCartBtn.addEventListener('click', () => {
         if (!userIsAuthenticated) {
-            window.location.href = "{% url 'login' %}?next=" + window.location.pathname;
+            window.location.href = "{% url 'signup' %}?next=" + window.location.pathname;
             return;
         }
 

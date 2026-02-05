@@ -282,6 +282,36 @@ select {
   box-shadow: -10px 0 40px rgba(0,0,0,0.1);
 }
 
+.nav-drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.nav-drawer-links {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.nav-drawer-links a {
+  color: var(--ink);
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(230, 211, 163, 0.35);
+}
+
+.nav-drawer-links a:last-child {
+  border-bottom: none;
+}
+
+.nav-drawer-cta {
+  display: grid;
+  gap: 12px;
+}
+
 .nav-drawer[aria-hidden="false"] {
   transform: translateX(0);
 }
