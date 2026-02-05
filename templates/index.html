@@ -54,29 +54,72 @@
         <p class="section-subtitle">
           Curated capsules that celebrate love, legacy, and luminous everyday luxury.
         </p>
-        <div class="grid grid-3" style="margin-top: 32px">
+        <div class="grid grid-3 featured-collections" style="margin-top: 32px">
           {% for collection in collections %}
-          <article class="card">
-            <h3 class="product-title">{{ collection.name }}</h3>
-            <p>{{ collection.description|truncatewords:10 }}</p>
-            <a class="btn btn-outline" href="{% url 'collections' %}">Discover</a>
+          <article class="card collection-card">
+            <div class="collection-media">
+              {% if collection.banner_image %}
+              <img
+                src="{{ collection.banner_image.url }}"
+                alt="{{ collection.name }} styling"
+                loading="lazy"
+                data-lightbox-trigger
+              />
+              {% else %}
+              <div class="collection-placeholder">{{ collection.name }}</div>
+              {% endif %}
+            </div>
+            <div class="collection-content">
+              <h3 class="product-title collection-title">{{ collection.name }}</h3>
+              <p class="collection-desc">{{ collection.description|truncatewords:10 }}</p>
+              <a class="btn btn-outline" href="{% url 'collections' %}">Discover</a>
+            </div>
           </article>
           {% empty %}
-          <!-- Fallback if no collections -->
-          <article class="card">
-            <h3 class="product-title">Bridal Lumière</h3>
-            <p>Graceful silhouettes for weddings that deserve eternal brilliance.</p>
-            <a class="btn btn-outline" href="{% url 'collections' %}">Discover</a>
+          <article class="card collection-card">
+            <div class="collection-media">
+              <img
+                src="{% static 'images/home-image-2.jpg' %}"
+                alt="Bridal Lumière"
+                loading="lazy"
+                data-lightbox-trigger
+              />
+            </div>
+            <div class="collection-content">
+              <h3 class="product-title collection-title">Bridal Lumière</h3>
+              <p class="collection-desc">Graceful silhouettes for weddings that deserve eternal brilliance.</p>
+              <a class="btn btn-outline" href="{% url 'collections' %}">Discover</a>
+            </div>
           </article>
-          <article class="card">
-            <h3 class="product-title">Eternal Engagement</h3>
-            <p>Statement solitaires and halos sculpted to capture forever.</p>
-            <a class="btn btn-outline" href="{% url 'collections' %}">Discover</a>
+          <article class="card collection-card">
+            <div class="collection-media">
+              <img
+                src="{% static 'images/home-image-3.jpg' %}"
+                alt="Eternal Engagement"
+                loading="lazy"
+                data-lightbox-trigger
+              />
+            </div>
+            <div class="collection-content">
+              <h3 class="product-title collection-title">Eternal Engagement</h3>
+              <p class="collection-desc">Statement solitaires and halos sculpted to capture forever.</p>
+              <a class="btn btn-outline" href="{% url 'collections' %}">Discover</a>
+            </div>
           </article>
-          <article class="card">
-            <h3 class="product-title">Everyday Radiance</h3>
-            <p>Delicate layers and modern essentials for elevated moments.</p>
-            <a class="btn btn-outline" href="{% url 'collections' %}">Discover</a>
+          <article class="card collection-card">
+            <div class="collection-media">
+              <img
+                src="{% static 'images/home-image-4.jpg' %}"
+                alt="Everyday Radiance"
+                loading="lazy"
+                data-lightbox-trigger
+              />
+            </div>
+            <div class="collection-content">
+              <h3 class="product-title collection-title">Everyday Radiance</h3>
+              <p class="collection-desc">Delicate layers and modern essentials for elevated moments.</p>
+              <a class="btn btn-outline" href="{% url 'collections' %}">Discover</a>
+            </div>
           </article>
           {% endfor %}
         </div>

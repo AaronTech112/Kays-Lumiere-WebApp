@@ -481,6 +481,58 @@ select {
   padding: 22px;
 }
 
+.featured-collections {
+  align-items: stretch;
+}
+
+.collection-card {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.collection-media {
+  width: 100%;
+  overflow: hidden;
+}
+
+.collection-media img,
+.collection-placeholder {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+}
+
+.collection-placeholder {
+  background: var(--ivory);
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  padding: 24px;
+}
+
+.collection-content {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.collection-title {
+  margin-bottom: 0;
+}
+
+.collection-desc {
+  color: var(--muted);
+}
+
+.collection-card .btn {
+  margin-top: 6px;
+}
+
 .product-title {
   font-family: "Playfair Display", serif;
   margin: 0 0 8px;

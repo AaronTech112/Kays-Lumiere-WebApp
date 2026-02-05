@@ -9,14 +9,13 @@ import json
 import requests
 import uuid
 
-def calculate_shipping(city):
-    # Simple logic for now
-    if not city:
-        return 2500
-    city = city.lower()
-    if 'lagos' in city:
-        return 1000
-    return 2500
+def calculate_shipping(state):
+    if not state:
+        return 8500
+    normalized = state.lower().replace(' ', '')
+    if 'fct' in normalized or 'abuja' in normalized:
+        return 5000
+    return 8500
 
 @login_required
 def add_to_cart(request):
@@ -131,7 +130,7 @@ def place_order(request):
         if not cart.items.exists():
              return JsonResponse({'error': 'Cart is empty'}, status=400)
 
-        shipping_fee = calculate_shipping(city)
+        shipping_fee = calculate_shipping(state)
         total_amount = float(cart.total_price) + shipping_fee
         
         order = Order.objects.create(
