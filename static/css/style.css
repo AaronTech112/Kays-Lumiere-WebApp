@@ -111,6 +111,7 @@ select {
 .btn-gold {
   background: var(--gold);
   color: #1a140f;
+  padding: 0px 16px 0px 16px;
 }
 
 .btn-gold:hover,
@@ -336,6 +337,11 @@ select {
     gap: 20px;
     font-size: 1.1rem;
     font-weight: 500;
+  }
+
+  .nav-drawer-cta .btn {
+    padding: 10px 18px;
+    font-size: 0.9rem;
   }
 }
 
