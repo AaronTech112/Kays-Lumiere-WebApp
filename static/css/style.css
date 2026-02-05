@@ -494,6 +494,29 @@ select {
   gap: 24px;
 }
 
+.story .badge-row {
+  flex-wrap: wrap;
+  row-gap: 12px;
+}
+
+.story .badge {
+  white-space: normal;
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .story {
+    padding: 32px 24px;
+  }
+
+  .story .badge-row {
+    gap: 10px;
+  }
+
+  .story .badge {
+    flex: 1 1 100%;
+  }
+}
 .testimonial {
   border-left: 3px solid var(--gold);
   padding-left: 18px;
