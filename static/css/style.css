@@ -310,13 +310,15 @@ select {
 }
 
 /* Hero Section */
-.hero-wrapper {
+.hero-wrapper,
+.hero-grid {
   display: grid;
   gap: 40px;
   padding: 40px 0 80px;
 }
 
-.hero-content {
+.hero-content,
+.hero-grid > div:first-child {
   max-width: 600px;
   display: flex;
   flex-direction: column;
@@ -331,7 +333,8 @@ select {
   margin: 0;
 }
 
-.hero-desc {
+.hero-desc,
+.hero-text {
   font-size: 1.1rem;
   color: var(--muted);
   max-width: 480px;
@@ -391,7 +394,8 @@ select {
 }
 
 @media (min-width: 900px) {
-  .hero-wrapper {
+  .hero-wrapper,
+  .hero-grid {
     grid-template-columns: 1fr 1fr;
     align-items: center;
   }
@@ -507,6 +511,127 @@ select {
   border-radius: 999px;
   border: 1px solid var(--border);
   background: #fff;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+.auth-shell {
+  width: 100%;
+}
+
+.auth-shell.full-screen-auth {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+}
+
+.auth-grid {
+  display: grid;
+  gap: 32px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  align-items: start;
+}
+
+.auth-card {
+  padding: 32px;
+}
+
+.auth-card form {
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-card label {
+  margin-top: 16px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.auth-card .field {
+  width: 100%;
+}
+
+.auth-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.auth-muted {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.auth-benefits {
+  display: grid;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.alert {
+  padding: 14px 16px;
+  border-radius: 16px;
+  margin-bottom: 16px;
+}
+
+.alert.error {
+  background: #fff4f4;
+  border: 1px solid #f3c6c6;
+  color: #9c2f2f;
+}
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 12, 10, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition);
+  z-index: 2000;
+}
+
+.lightbox[aria-hidden="false"] {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.lightbox img {
+  max-width: min(900px, 90vw);
+  max-height: 80vh;
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  border: none;
+  background: #fff;
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-weight: 600;
+  cursor: pointer;
 }
 
 /* Footer */
