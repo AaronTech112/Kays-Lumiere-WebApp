@@ -470,10 +470,29 @@ select {
   color: var(--muted);
 }
 
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 18px;
+}
+
 .gallery img {
   border-radius: 22px;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 4 / 5;
   object-fit: cover;
+  height: 220px;
+  width: 100%;
+}
+
+@media (min-width: 900px) {
+  .gallery {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 22px;
+  }
+
+  .gallery img {
+    height: 240px;
+  }
 }
 
 .editorial-animate {
